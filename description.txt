@@ -1,0 +1,6 @@
+A port of the original Even More Modifiers mod.
+Do not use with Jofairden's version!
+
+This edition contains all of the features of the classic Even More Modifiers!
+
+Also included is a framework built for creating your own modifiers, which is a lot simpler to use compared to Jofairden's version.

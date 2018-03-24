@@ -1,0 +1,10 @@
+author = theGameMaster1234
+version = 0.0.10
+displayName = EMM Classic
+homepage = http://forums.terraria.org/index.php?threads/even-more-modifiers.45790/
+hideCode = false
+hideResources = false
+includeSource = true
+languageVersion = 6
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePdb = true

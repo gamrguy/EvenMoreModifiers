@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6FAC04A1-1D95-4F18-BEE0-BD32AA5BA773}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Loot</RootNamespace>
+    <AssemblyName>Loot</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Terraria">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Effects\ArmorEffect.cs" />
+    <Compile Include="Effects\AccessoryEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\AmmoReduceEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffConfuseEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffIchorEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffCursedInfernoEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffFrostburnEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffFireEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffPoisonEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\MissingHealthDamageEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\CursedDamageEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DamagePlusNightEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DamagePlusDayEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DamageWithManaCostEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\ManaReduceEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\VelocityDamageEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DebuffEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\VelocityPlusEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\SpeedPlusEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\KnockbackPlusEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\CritPlusEffect.cs" />
+    <Compile Include="Effects\WeaponEffects\DamagePlusEffect.cs" />
+    <Compile Include="LootDebugPlayer.cs" />
+    <Compile Include="LootGlobalNPC.cs" />
+    <Compile Include="ModifierItem.cs" />
+    <Compile Include="EMMItem.cs" />
+    <Compile Include="Loot.cs" />
+    <Compile Include="ModifierPlayer.cs" />
+    <Compile Include="LootUtils.cs" />
+    <Compile Include="MagicDice.cs" />
+    <Compile Include="Modifiers\Modifier.cs" />
+    <Compile Include="Modifiers\ModifierEffect.cs" />
+    <Compile Include="EMMLoader.cs" />
+    <Compile Include="Modifiers\ModifierRarity.cs" />
+    <Compile Include="Modifiers\Ours\ArmorModifier.cs" />
+    <Compile Include="Modifiers\Ours\AccessoryModifier.cs" />
+    <Compile Include="Modifiers\Ours\WeaponModifier.cs" />
+    <Compile Include="Rarities\CommonRarity.cs" />
+    <Compile Include="Rarities\LegendaryRarity.cs" />
+    <Compile Include="Rarities\RareRarity.cs" />
+    <Compile Include="Rarities\TranscendentRarity.cs" />
+    <Compile Include="Rarities\UncommonRarity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build.txt" />
+    <Content Include="description.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"D:\Apps\Steam\steamapps\common\Terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
