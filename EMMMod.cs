@@ -36,6 +36,9 @@ namespace EvenMoreModifiers
 			AddEffect(this, new CritPlusEffect());
 			AddEffect(this, new SpeedPlusEffect());
 			AddEffect(this, new VelocityPlusEffect());
+			AddEffect(this, new KnockbackPlusEffect());
+			AddEffect(this, new ManaReduceEffect());
+			AddEffect(this, new AmmoReduceEffect());
 
 			// Rarities are determined by the sum of the effects' ratios of current power to max power.
 			// One effect at half strength would be Uncommon. Three would give Rare.
@@ -83,10 +86,13 @@ namespace EvenMoreModifiers
 
 		public static Effect GetEMMEffect(string name)
 		{
-			Effect e;
-			effectRegistry.TryGetValue(name, out e);
-			e = e.Clone();
-			return e;
+			if (effectRegistry.TryGetValue(name, out Effect e))
+			{
+				e = e.Clone();
+				return e;
+			}
+			else
+				return null;
 		}
 
 		public override void Unload()

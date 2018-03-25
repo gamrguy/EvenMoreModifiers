@@ -125,12 +125,12 @@ namespace EvenMoreModifiers
 			int count = reader.ReadInt32();
 			for(int i=0; i<count; i++)
 			{
-				Effect e;
-				EMMMod.effectRegistry.TryGetValue(reader.ReadString(), out e);
-				e = e.Clone();
+				Effect e = EMMMod.GetEMMEffect(reader.ReadString()).Clone();
+				if (e == null) return;
 				e.Power = (float)reader.ReadDouble();
 				e.Scale = (float)reader.ReadDouble();
 				e.NetReceive(item, reader);
+				e.ApplyItem(item);
 			}
 		}
 
@@ -203,7 +203,7 @@ namespace EvenMoreModifiers
 
 		public override void PostReforge(Item item)
 		{
-			if (!hasRolled) RollEffects(item, Main.player[Main.myPlayer].GetModPlayer<EMMPlayer>(), "Reforge");
+			if (!hasRolled || effects.Count == 0) RollEffects(item, Main.player[Main.myPlayer].GetModPlayer<EMMPlayer>(), "Reforge");
 
 			effects.ForEach((e) => e.PostReforge(item));
 		}

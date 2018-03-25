@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace EvenMoreModifiers.Effects
 {
-	public class WeaponEffect : Effect
+	public abstract class WeaponEffect : Effect
 	{
 		public override bool CanRoll(Item item, string context)
 		{
@@ -21,7 +21,7 @@ namespace EvenMoreModifiers.Effects
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			tooltips.AddTooltipLine(mod, Name, $"+{Power}% damage", Color.LimeGreen);
+			tooltips.AddTooltipLine(mod, Name, $"+{Power}% damage", Color.IndianRed);
 		}
 
 		public override void GetWeaponDamage(Item item, Player player, ref int damage)
@@ -37,7 +37,7 @@ namespace EvenMoreModifiers.Effects
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			tooltips.AddTooltipLine(mod, Name, $"+{Power}% crit chance", Color.LimeGreen);
+			tooltips.AddTooltipLine(mod, Name, $"+{Power}% crit chance", Color.Crimson);
 		}
 
 		public override void GetWeaponCrit(Item item, Player player, ref int crit)
@@ -53,7 +53,7 @@ namespace EvenMoreModifiers.Effects
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			tooltips.AddTooltipLine(mod, Name, $"+{Power}% speed", Color.LimeGreen);
+			tooltips.AddTooltipLine(mod, Name, $"+{Power}% speed", Color.LightBlue);
 		}
 
 		public override float UseTimeMultiplier(Item item, Player player)
@@ -70,7 +70,7 @@ namespace EvenMoreModifiers.Effects
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			tooltips.AddTooltipLine(mod, Name, $"+{Power}% knockback", Color.LimeGreen);
+			tooltips.AddTooltipLine(mod, Name, $"+{Power}% knockback", Color.LightGray);
 		}
 
 		public override void GetWeaponKnockback(Item item, Player player, ref float knockback)
@@ -92,12 +92,57 @@ namespace EvenMoreModifiers.Effects
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			tooltips.AddTooltipLine(mod, Name, $"+{Power}% velocity", Color.LimeGreen);
+			tooltips.AddTooltipLine(mod, Name, $"+{Power}% velocity", Color.SteelBlue);
 		}
 
 		public override void ApplyItem(Item item)
 		{
 			item.shootSpeed *= 1 + Power / 100;
+		}
+	}
+
+	public class ManaReduceEffect : WeaponEffect
+	{
+		public override float MinScale => 1f/15f;
+		public override float BasePower => 15f;
+		public override int AutoRound => 0;
+
+		public override bool CanRoll(Item item, string context)
+		{
+			return base.CanRoll(item, context) && item.mana > 0;
+		}
+
+		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+		{
+			tooltips.AddTooltipLine(mod, Name, $"-{Power}% mana cost", Color.MediumPurple);
+		}
+
+		public override void ApplyItem(Item item)
+		{
+			item.mana = (int)Math.Floor(item.mana * (1 - Power / 100));
+			if (item.mana <= 0) item.mana = 1;
+		}
+	}
+
+	public class AmmoReduceEffect : WeaponEffect
+	{
+		public override float MinScale => 0.05f;
+		public override float BasePower => 20f;
+		public override int AutoRound => 0;
+
+		public override bool CanRoll(Item item, string context)
+		{
+			return base.CanRoll(item, context) && item.useAmmo > 0;
+		}
+
+		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+		{
+			tooltips.AddTooltipLine(mod, Name, $"{Power}% chance to not consume ammo", Color.LightGoldenrodYellow);
+		}
+
+		public override bool ConsumeAmmo(Item item, Player player)
+		{
+			return Main.rand.Next() > Power / 100;
 		}
 	}
 }

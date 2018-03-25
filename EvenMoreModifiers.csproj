@@ -53,6 +53,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Effect.cs" />
+    <Compile Include="Effects\WeaponEffects.cs" />
+    <Compile Include="EMMItem.cs" />
+    <Compile Include="EMMMod.cs" />
+    <Compile Include="EMMPlayer.cs" />
+    <Compile Include="EMMUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.txt" />
