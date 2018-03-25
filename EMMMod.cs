@@ -4,11 +4,11 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-
+using EvenMoreModifiers.Effects;
 
 /*
  * (c) original version by hiccup
- * reworked and maintained by jofairden
+ * reworked and maintained by thegamemaster1234
  * for tmodloader
  */
 
@@ -32,6 +32,10 @@ namespace EvenMoreModifiers
 		public override void Load()
 		{
 			effectRegistry = new Dictionary<string, Effect>();
+			AddEffect(this, new DamagePlusEffect());
+			AddEffect(this, new CritPlusEffect());
+			AddEffect(this, new SpeedPlusEffect());
+			AddEffect(this, new VelocityPlusEffect());
 
 			// Rarities are determined by the sum of the effects' ratios of current power to max power.
 			// One effect at half strength would be Uncommon. Three would give Rare.
@@ -51,10 +55,10 @@ namespace EvenMoreModifiers
 
 		public static EMMRarity GetRarity(float value)
 		{
-			float x = float.MaxValue;
+			float x = float.MinValue;
 			var result = new EMMRarity("Common", 0f, Color.White);
 			rarities.ForEach((r) => {
-				if(r.Value < x && r.Value > value)
+				if(r.Value > x && r.Value <= value)
 				{
 					x = r.Value;
 					result = r;
@@ -66,6 +70,8 @@ namespace EvenMoreModifiers
 
 		public static bool AddEffect(Mod mod, Effect effect)
 		{
+			effect.mod = mod;
+			effect.Name = effect.GetType().Name;
 			string name = $"{mod.Name}:{effect.Name}";
 			if (!effectRegistry.ContainsKey(name))
 			{
@@ -73,6 +79,14 @@ namespace EvenMoreModifiers
 				return true;
 			}
 			return false;
+		}
+
+		public static Effect GetEMMEffect(string name)
+		{
+			Effect e;
+			effectRegistry.TryGetValue(name, out e);
+			e = e.Clone();
+			return e;
 		}
 
 		public override void Unload()

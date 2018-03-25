@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -18,7 +20,7 @@ namespace EvenMoreModifiers
 		public static float LUCK_EFFECT_CHANCE = 0.1f / 3; // Increase in chance for rolling effects, default 0.03333% each
 		public static float LUCK_POWER_CAP = 1.2f;  // Maximum value that luck can increase effect power by, default 20%
 
-		public List<Effect> effects = new List<Effect>();  // Effects on this item
+		public List<Effect> effects;  // Effects on this item
 		public bool hasRolled;    //Whether this item has rolled for effects
 
 		// Calculates the current power level of effects on this item. Used for determining rarity.
@@ -31,6 +33,8 @@ namespace EvenMoreModifiers
 
 		private void RollEffects(Item item, EMMPlayer player, string context)
 		{
+			hasRolled = true;
+
 			var rand = new WeightedRandom<Effect>();
 
 			// Add all applicable effects to the random
@@ -38,20 +42,30 @@ namespace EvenMoreModifiers
 				if (e.Value.CanRoll(item, context))
 					rand.Add(e.Value, e.Value.Weight);
 
+			if (rand.elements.Count == 0)
+				return;
+
+			if (effects == null)
+				effects = new List<Effect>();
+			else if (effects != null)
+				effects.Clear();
+			else
+				return;
+
 			// Add all effects
 			for (int i = 0; i < MAX_EFFECTS; i++)
 			{
 				if (rand.elements.Count > 0 && Main.rand.NextFloat() < EFFECT_CHANCE + player.luck * LUCK_EFFECT_CHANCE)
 				{
-					Effect e = rand.Get().Clone(player);
+					Effect r = rand.Get();
+					Effect e = r.Clone();
+					e.Apply(item, player);
 					effects.Add(e);
-					rand.elements.Remove(new Tuple<Effect, double>(e, e.Weight));
+					rand.elements.Remove(new Tuple<Effect, double>(r, r.Weight));
 					rand.needsRefresh = true;
 				}
 				else break;
 			}
-
-			hasRolled = true;
 		}
 
 		public override TagCompound Save(Item item)
@@ -69,21 +83,60 @@ namespace EvenMoreModifiers
 		public override void Load(Item item, TagCompound tag)
 		{
 			hasRolled = tag.GetBool("HasRolled");
-			foreach (var kv in tag)
+			foreach (var kv in tag.GetCompound("Effects"))
 			{
 				Effect e;
 				if (EMMMod.effectRegistry.TryGetValue(kv.Key, out e))
 				{
-					effects.Add(e);
+					e = e.Clone();
 					e.Load(item, kv.Value as TagCompound);
+					effects.Add(e);
 				}
 			}
 		}
 
 		public override bool NeedsSaving(Item item) => hasRolled;
 
+		public override GlobalItem Clone(Item item, Item itemClone)
+		{
+			var clone = (EMMItem)base.Clone(item, itemClone);
+			if (effects != null)
+				clone.effects = effects.Select(e => e.Clone()).ToList();
+
+			return clone;
+		}
+
+		public override void NetSend(Item item, BinaryWriter writer)
+		{
+			writer.Write(hasRolled);
+			writer.Write(effects.Count);
+			foreach(var e in effects)
+			{
+				writer.Write($"{e.mod.Name}:{e.Name}");
+				writer.Write((double)e.Power);
+				writer.Write((double)e.Scale);
+				e.NetSend(item, writer);
+			}
+		}
+
+		public override void NetReceive(Item item, BinaryReader reader)
+		{
+			hasRolled = reader.ReadBoolean();
+			int count = reader.ReadInt32();
+			for(int i=0; i<count; i++)
+			{
+				Effect e;
+				EMMMod.effectRegistry.TryGetValue(reader.ReadString(), out e);
+				e = e.Clone();
+				e.Power = (float)reader.ReadDouble();
+				e.Scale = (float)reader.ReadDouble();
+				e.NetReceive(item, reader);
+			}
+		}
+
 		public override void SetDefaults(Item item)
 		{
+			if (effects == null) effects = new List<Effect>();
 			effects.ForEach((e) => e.SetDefaults(item));
 		}
 
@@ -131,9 +184,12 @@ namespace EvenMoreModifiers
 
 		public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
 		{
-			var rarity = EMMMod.GetRarity(EffectSummary());
-			tooltips.AddTooltipLine(mod, "RarityLine", $"[{rarity.Name}]", rarity.Color);
-			effects.ForEach((e) => e.ModifyTooltips(item, tooltips));
+			if (effects.Count() > 0)
+			{
+				var rarity = EMMMod.GetRarity(EffectSummary());
+				tooltips.AddTooltipLine(mod, "RarityLine", $"[{rarity.Name}]", rarity.Color);
+				effects.ForEach((e) => e.ModifyTooltips(item, tooltips));
+			}
 		}
 
 		public override bool OnPickup(Item item, Player player)
@@ -143,6 +199,13 @@ namespace EvenMoreModifiers
 			bool result = true;
 			effects.ForEach((e) => result &= e.OnPickup(item, player));
 			return result;
+		}
+
+		public override void PostReforge(Item item)
+		{
+			if (!hasRolled) RollEffects(item, Main.player[Main.myPlayer].GetModPlayer<EMMPlayer>(), "Reforge");
+
+			effects.ForEach((e) => e.PostReforge(item));
 		}
 
 		public override void GetWeaponCrit(Item item, Player player, ref int crit)
