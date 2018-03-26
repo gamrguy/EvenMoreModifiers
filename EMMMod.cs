@@ -39,6 +39,16 @@ namespace EvenMoreModifiers
 			AddEffect(this, new KnockbackPlusEffect());
 			AddEffect(this, new ManaReduceEffect());
 			AddEffect(this, new AmmoReduceEffect());
+			AddEffect(this, new DamageWithManaCostEffect());
+			AddEffect(this, new DamagePlusDayEffect());
+			AddEffect(this, new DamagePlusNightEffect());
+			AddEffect(this, new CursedDamageEffect());
+			AddEffect(this, new ConfuseDebuffEffect());
+			AddEffect(this, new CursedInfernoDebuffEffect());
+			AddEffect(this, new FireDebuffEffect());
+			AddEffect(this, new FrostburnDebuffEffect());
+			AddEffect(this, new IchorDebuffEffect());
+			AddEffect(this, new PoisonDebuffEffect());
 
 			// Rarities are determined by the sum of the effects' ratios of current power to max power.
 			// One effect at half strength would be Uncommon. Three would give Rare.
@@ -86,13 +96,13 @@ namespace EvenMoreModifiers
 
 		public static Effect GetEMMEffect(string name)
 		{
-			if (effectRegistry.TryGetValue(name, out Effect e))
+			Effect e;
+			if (effectRegistry.TryGetValue(name, out e))
 			{
 				e = e.Clone();
 				return e;
 			}
-			else
-				return null;
+			else return null;
 		}
 
 		public override void Unload()

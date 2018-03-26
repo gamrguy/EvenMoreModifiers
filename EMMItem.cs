@@ -147,6 +147,13 @@ namespace EvenMoreModifiers
 			return result;
 		}
 
+		public override bool CanEquipAccessory(Item item, Player player, int slot)
+		{
+			bool result = false;
+			effects.ForEach((e) => result |= e.CanEquipAccessory(item, player, slot));
+			return result;
+		}
+
 		public override bool? CanHitNPC(Item item, Player player, NPC target)
 		{
 			bool? result = null;
@@ -163,6 +170,18 @@ namespace EvenMoreModifiers
 		{
 			bool result = true;
 			effects.ForEach((e) => result &= e.CanHitPvp(item, player, target));
+			return result;
+		}
+
+		public override void HoldItem(Item item, Player player)
+		{
+			effects.ForEach((e) => e.HoldItem(item, player));
+		}
+
+		public override bool HoldItemFrame(Item item, Player player)
+		{
+			bool result = false;
+			effects.ForEach((e) => result |= e.HoldItemFrame(item, player));
 			return result;
 		}
 
@@ -198,6 +217,13 @@ namespace EvenMoreModifiers
 
 			bool result = true;
 			effects.ForEach((e) => result &= e.OnPickup(item, player));
+			return result;
+		}
+
+		public override bool NewPreReforge(Item item)
+		{
+			bool result = true;
+			effects.ForEach((e) => result &= e.NewPreReforge(item));
 			return result;
 		}
 

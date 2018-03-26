@@ -20,6 +20,20 @@ namespace EvenMoreModifiers
 		}
 	}
 
+	public struct DebuffChance
+	{
+		public int BuffType;
+		public int BuffTime;
+		public float BuffChance;
+
+		public DebuffChance(int bType, int bTime, float bChance)
+		{
+			BuffType = bType;
+			BuffTime = bTime;
+			BuffChance = bChance;
+		}
+	}
+
 	public static class TooltipHelper
 	{
 		public static void AddTooltipLine(this List<TooltipLine> tooltips, Mod mod, string name, string text, Color color)
